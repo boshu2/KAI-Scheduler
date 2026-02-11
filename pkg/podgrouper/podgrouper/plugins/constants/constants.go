@@ -16,6 +16,8 @@ const (
 
 	DefaultPrioritiesConfigMapTypesKey = "types"
 
+	PodGroupNameLabelKey = "kai.scheduler/pod-group-name"
+
 	DefaultQueueName = "default-queue"
 
 	TopologyKey                   = "kai.scheduler/topology"

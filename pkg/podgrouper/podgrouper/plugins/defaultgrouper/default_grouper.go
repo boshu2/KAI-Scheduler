@@ -66,6 +66,11 @@ func (dg *DefaultGrouper) GetPodGroupMetadata(topOwner *unstructured.Unstructure
 	priorityClassName, defaults := dg.calcPriorityClassWithDefaults(allOwners, pod, constants.TrainPriorityClass)
 	preemptibility := dg.calcPodGroupPreemptibilityWithDefaults(allOwners, pod, defaults)
 
+	podGroupName := dg.CalcPodGroupName(topOwner)
+	if labelName, found := pod.GetLabels()[constants.PodGroupNameLabelKey]; found && labelName != "" {
+		podGroupName = labelName
+	}
+
 	podGroupMetadata := podgroup.Metadata{
 		Owner: metav1.OwnerReference{
 			APIVersion: topOwner.GetAPIVersion(),
@@ -74,7 +79,7 @@ func (dg *DefaultGrouper) GetPodGroupMetadata(topOwner *unstructured.Unstructure
 			UID:        topOwner.GetUID(),
 		},
 		Namespace:         pod.GetNamespace(),
-		Name:              dg.CalcPodGroupName(topOwner),
+		Name:              podGroupName,
 		Annotations:       dg.CalcPodGroupAnnotations(topOwner, pod),
 		Labels:            dg.CalcPodGroupLabels(topOwner, pod),
 		Queue:             dg.CalcPodGroupQueue(topOwner, pod),
